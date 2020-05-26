@@ -196,4 +196,15 @@ bool AsarFileSystem::exists(const std::string& path) const {
   return !node.isNull();
 }
 
+std::vector<std::string> AsarFileSystem::readdir(const std::string& path) const {
+  Json::Value node = this->getNode(path);
+  if (node.isNull()) {
+    throw AsarError(invalid_path, "No such directory: " + path);
+  }
+  if (!node.isMember("files")) {
+    throw AsarError(invalid_path, "Not a directory: " + path);
+  }
+  return node.getMemberNames();
+}
+
 }

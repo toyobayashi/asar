@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <regex>
 #include <cstdint>
 #include <cstddef>
 #include <cstdio>
@@ -38,9 +37,13 @@ class Asar {
   std::string getTempDir() const;
   std::string getTempPath(const std::string&) const;
   std::string getSrc() const;
+  Json::Value getNode(const std::string&) const;
   uint64_t getFileSize() const;
   uint32_t getHeaderSize() const;
   std::string getHeaderJsonString(bool format = false) const;
+  bool exists(const std::string&) const;
+  std::vector<std::string> readdir(const std::string& path) const;
+  std::vector<uint8_t> readFile(const std::string& path) const;
  private:
   static toyo::path::env_paths envpaths;
 

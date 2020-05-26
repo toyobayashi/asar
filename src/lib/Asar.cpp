@@ -7,6 +7,7 @@
 #include "pickle/pickle.hpp"
 #include "oid/oid.hpp"
 
+#include <regex>
 #include <fstream>
 
 namespace asar {
@@ -362,6 +363,43 @@ uint32_t Asar::getHeaderSize() const {
 
 std::string Asar::getHeaderJsonString(bool format) const {
   return this->_fs.toJson(format);
+}
+
+bool Asar::exists(const std::string& path) const {
+  return this->_fs.exists(path);
+}
+
+std::vector<std::string> Asar::readdir(const std::string& path) const {
+  return this->_fs.readdir(path);
+}
+
+Json::Value Asar::getNode(const std::string& path) const {
+  return this->_fs.getNode(path);
+}
+
+std::vector<uint8_t> Asar::readFile(const std::string& path) const {
+  Json::Value node = this->_fs.getNode(path);
+  if (node.isNull()) {
+    throw AsarError(invalid_path, "No such file or directory: " + toyo::path::join(this->_src, path));
+  }
+
+  if (node.isMember("files")) {
+    throw AsarError(invalid_path, "Illegal operation on a directory: " + toyo::path::join(this->_src, path));
+  }
+
+  if (node.isMember("unpacked")) {
+    return toyo::fs::read_file(toyo::path::join(this->_src + ".unpacked", path));
+  }
+  uint32_t size = node["size"].asUInt();
+  uint64_t offset = node["offset"].asUInt64();
+  uint8_t* buf = new uint8_t[size];
+  long curpos = ::ftell(this->_fd);
+  ::fseek(this->_fd, offset, SEEK_SET);
+  ::fread(buf, 1, size, this->_fd);
+  ::fseek(this->_fd, curpos, SEEK_SET);
+  std::vector<uint8_t> res(buf, buf + size);
+  delete buf;
+  return res;
 }
 
 } // namespace asar

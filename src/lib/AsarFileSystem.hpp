@@ -40,6 +40,7 @@ class AsarFileSystem {
   std::string toJson(bool format = false) const;
 
   bool exists(const std::string& path) const;
+  std::vector<std::string> readdir(const std::string& path) const;
   const Json::Value& get() const;
  private:
   Json::Value header;
