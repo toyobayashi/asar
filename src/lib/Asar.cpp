@@ -1,6 +1,8 @@
-#include "Asar.hpp"
+#include "asar/Asar.hpp"
 #include "AsarError.hpp"
-#include "AsarFileSystem.hpp"
+
+#include "toyo/fs.hpp"
+#include "toyo/path.hpp"
 
 #include "toyo/process.hpp"
 #include "toyo/charset.hpp"
@@ -31,7 +33,7 @@ void Asar::copyDirectory(const std::string s, const std::string& d, asar_transfo
     toyo::fs::mkdirs(dest);
     std::vector<std::string> items = toyo::fs::readdir(source);
     for (size_t i = 0; i < items.size(); i++) {
-      toyo::fs::copy(toyo::path::join(source, items[i]), toyo::path::join(dest, items[i]), transform);
+      Asar::copyDirectory(toyo::path::join(source, items[i]), toyo::path::join(dest, items[i]), transform);
     }
   } else {
     Asar::copyFile(source, dest, transform);
@@ -205,6 +207,7 @@ void Asar::pack(
 #endif
 
   if (!out.is_open()) {
+    toyo::fs::remove(tmpsrc);
     throw AsarError(file_error, "Open file failed.");
   }
 
@@ -226,6 +229,7 @@ void Asar::pack(
 #endif
       if (!in.is_open()) {
         out.close();
+        toyo::fs::remove(tmpsrc);
         throw AsarError(file_error, "Open file failed.");
       }
 
@@ -246,6 +250,7 @@ void Asar::pack(
   }
 
   out.close();
+  toyo::fs::remove(tmpsrc);
 }
 
 Asar::~Asar() {
@@ -310,8 +315,11 @@ void Asar::_readInfo() {
   Pickle pickle2(headerString, uHeaderSize);
   PickleIterator it2(pickle2);
   std::string strHeader;
-  it2.ReadString(&strHeader);
+  r = it2.ReadString(&strHeader);
   delete[] headerString;
+  if (!r) {
+    throw AsarError(invalid_asar, "Invalid asar file. Read header failed.");
+  }
 
   std::istringstream is(strHeader);
   Json::Value headerJson;
@@ -394,7 +402,7 @@ std::vector<uint8_t> Asar::readFile(const std::string& path) const {
   uint64_t offset = 8 + this->_headerSize + std::strtoull(node["offset"].asString().c_str(), nullptr, 10);
   uint8_t* buf = new uint8_t[size];
   long curpos = ::ftell(this->_fd);
-  ::fseek(this->_fd, offset, SEEK_SET);
+  ::fseek(this->_fd, (long)offset, SEEK_SET);
   ::fread(buf, 1, size, this->_fd);
   ::fseek(this->_fd, curpos, SEEK_SET);
   std::vector<uint8_t> res(buf, buf + size);
@@ -408,7 +416,8 @@ std::vector<std::string> Asar::list() const {
   this->walk(this->_fs.get(), [&](const Json::Value&, const std::string& name) {
     res.push_back(std::regex_replace(name, re, "/"));
     return true;
-  });
+  }, "/");
+  res.erase(res.begin(), res.begin() + 1);
   return res;
 }
 
@@ -474,7 +483,7 @@ void Asar::extract(const std::string& p, const std::string& dest) const {
   size_t read;
   uint32_t size = node["size"].asUInt();
   uint64_t offset = 8 + this->_headerSize + std::strtoull(node["offset"].asString().c_str(), nullptr, 10);
-  ::fseek(this->_fd, offset, SEEK_SET);
+  ::fseek(this->_fd, (long)offset, SEEK_SET);
   size_t total = 0;
   while ((read = ::fread(buf, sizeof(uint8_t), 128 * 1024, this->_fd)) > 0) {
     total += read;

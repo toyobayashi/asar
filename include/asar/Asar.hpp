@@ -1,16 +1,24 @@
 #ifndef __ASAR_HPP__
 #define __ASAR_HPP__
 
-#include <string>
-#include <vector>
-#include <cstdint>
+
+#include "asar.h"
+#include "AsarFileSystem.hpp"
 #include <cstddef>
 #include <cstdio>
-#include "json/json.h"
-#include "toyo/fs.hpp"
-#include "toyo/path.hpp"
-#include "AsarFileSystem.hpp"
-#include "asar/asar.h"
+
+namespace toyo {
+  namespace fs {
+    std::vector<std::string> readdir(const std::string&);
+  }
+
+  namespace path {
+    template <typename... Args>
+    std::string join(Args... args);
+
+    class env_paths;
+  }
+}
 
 namespace asar {
 
@@ -53,7 +61,7 @@ class Asar {
   void walk(const Json::Value& node, const Callable& callback, const std::string& path = "") const {
     if (callback(node, path)) {
       if (node.isMember("files")) {
-        std::vector<std::string> keys = node.getMemberNames();
+        std::vector<std::string> keys = node["files"].getMemberNames();
         for (const std::string& name : keys) {
           this->walk(node["files"][name], callback, toyo::path::join(path, name));
         }

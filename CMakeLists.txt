@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.6)
 project(asar)
 
 set(LIB_NAME asar)
-set(EXE_NAME asarmain)
+set(EXE_NAME asarcpp)
 set(TEST_EXE_NAME asartest)
 
 # set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})

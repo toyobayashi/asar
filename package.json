@@ -26,6 +26,6 @@
     "@ccpm/dep-paths": "^1.3.0",
     "@ccpm/oid": "^1.0.7",
     "@ccpm/pickle": "github:toyobayashi/pickle",
-    "@ccpm/toyo": "github:toyobayashi/toyo#v0.4.0"
+    "@ccpm/toyo": "github:toyobayashi/toyo#v0.4.1"
   }
 }

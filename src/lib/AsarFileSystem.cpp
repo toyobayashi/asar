@@ -1,6 +1,7 @@
 #include <cstring>
 
-#include "AsarFileSystem.hpp"
+#include "json/json.h"
+#include "asar/AsarFileSystem.hpp"
 #include "AsarError.hpp"
 
 #include <cstddef>
