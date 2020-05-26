@@ -482,6 +482,7 @@ void Asar::extract(const std::string& p, const std::string& dest) const {
     if (total >= size) {
       ::fwrite(buf, sizeof(uint8_t), read - (total - size), df);
       ::fflush(df);
+      break;
     } else {
       ::fwrite(buf, sizeof(uint8_t), read, df);
       ::fflush(df);
