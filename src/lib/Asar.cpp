@@ -391,7 +391,7 @@ std::vector<uint8_t> Asar::readFile(const std::string& path) const {
     return toyo::fs::read_file(toyo::path::join(this->_src + ".unpacked", path));
   }
   uint32_t size = node["size"].asUInt();
-  uint64_t offset = node["offset"].asUInt64();
+  uint64_t offset = 8 + this->_headerSize + std::strtoull(node["offset"].asString().c_str(), nullptr, 10);
   uint8_t* buf = new uint8_t[size];
   long curpos = ::ftell(this->_fd);
   ::fseek(this->_fd, offset, SEEK_SET);
@@ -410,6 +410,85 @@ std::vector<std::string> Asar::list() const {
     return true;
   });
   return res;
+}
+
+void Asar::extract(const std::string& p, const std::string& dest) const {
+  std::regex re("\\\\");
+  std::string path = std::regex_replace(p, re, "/");
+
+  Json::Value node = this->_fs.getNode(path);
+  if (node.isNull()) {
+    throw AsarError(invalid_path, "No such file or directory: " + toyo::path::join(this->_src, path));
+  }
+
+  std::string target = toyo::path::join(dest, toyo::path::basename(path));
+
+  if (node.isMember("files")) {
+    auto files = node["files"].getMemberNames();
+    for (const std::string& name : files) {
+      this->extract(toyo::path::join(path, name), target);
+    }
+    return;
+  }
+
+  auto dir = toyo::path::dirname(target);
+  if (!toyo::fs::exists(dir)) toyo::fs::mkdirs(dir);
+
+  if (node.isMember("unpacked")) {
+    toyo::fs::copy_file(toyo::path::join(this->_src + ".unpacked", path), target);
+    return;
+  }
+
+  if (node.isMember("link")) {
+    auto link = node["link"].asString();
+    if (toyo::process::platform() == "win32") {
+      this->extract(link, dest);
+      toyo::fs::rename(toyo::path::join(dest, toyo::path::basename(link)), target);
+      return;
+    }
+
+    auto destFilename = toyo::path::join(dest, path);
+
+    auto linkSrcPath = toyo::path::dirname(toyo::path::join(dest, link));
+    auto linkDestPath = toyo::path::dirname(destFilename);
+    auto relativePath = toyo::path::relative(linkDestPath, linkSrcPath);
+
+    toyo::fs::unlink(destFilename);
+    auto linkTo = toyo::path::join(relativePath, toyo::path::basename(link));
+
+    toyo::fs::symlink(linkTo, destFilename);
+    return;
+  }
+
+#ifdef _WIN32
+  FILE* df = ::_wfopen(toyo::charset::a2w(target).c_str(), L"wb+");
+#else
+  FILE* df = ::fopen(target.c_str(), "wb+");
+#endif
+  if (!df) {
+    throw AsarError(invalid_path, "Cannot write target file.");
+  }
+
+  uint8_t buf[128 * 1024];
+  long curpos = ::ftell(this->_fd);
+  size_t read;
+  uint32_t size = node["size"].asUInt();
+  uint64_t offset = 8 + this->_headerSize + std::strtoull(node["offset"].asString().c_str(), nullptr, 10);
+  ::fseek(this->_fd, offset, SEEK_SET);
+  size_t total = 0;
+  while ((read = ::fread(buf, sizeof(uint8_t), 128 * 1024, this->_fd)) > 0) {
+    total += read;
+
+    if (total >= size) {
+      ::fwrite(buf, sizeof(uint8_t), read - (total - size), df);
+      ::fflush(df);
+    } else {
+      ::fwrite(buf, sizeof(uint8_t), read, df);
+      ::fflush(df);
+    }
+  }
+
+  ::fclose(df);
 }
 
 } // namespace asar

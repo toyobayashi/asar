@@ -45,6 +45,7 @@ class Asar {
   std::vector<std::string> readdir(const std::string& path) const;
   std::vector<uint8_t> readFile(const std::string& path) const;
   std::vector<std::string> list() const;
+  void extract(const std::string&, const std::string&) const;
  private:
   
   template <typename Callable>
