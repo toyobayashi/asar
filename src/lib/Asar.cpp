@@ -491,4 +491,8 @@ void Asar::extract(const std::string& p, const std::string& dest) const {
   ::fclose(df);
 }
 
+void Asar::extractTemp(const std::string& path) const {
+  this->extract(path, toyo::path::dirname(toyo::path::join(this->_tmp, path)));
+}
+
 } // namespace asar
