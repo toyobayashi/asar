@@ -343,13 +343,13 @@ bool Asar::isOpen() const {
   return this->_fd != nullptr;
 }
 
-std::string Asar::getTempDir() const {
+const std::string& Asar::getTempDir() const {
   return this->_tmp;
 }
 std::string Asar::getTempPath(const std::string& path) const {
   return toyo::path::join(this->_tmp, path);
 }
-std::string Asar::getSrc() const {
+const std::string& Asar::getSrc() const {
   return this->_src;
 }
 

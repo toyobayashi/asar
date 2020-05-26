@@ -53,6 +53,26 @@ void asar_close(asar_t* asar) {
   delete asar;
 }
 
+int asar_is_open(asar_t* asar) {
+  return asar->impl->isOpen() ? 1 : 0;
+}
+
+const char* asar_get_temp_dir(asar_t* asar) {
+  return asar->impl->getTempDir().c_str();
+}
+
+const char* asar_get_src(asar_t* asar) {
+  return asar->impl->getSrc().c_str();
+}
+
+uint32_t asar_get_header_size(asar_t* asar) {
+  return asar->impl->getHeaderSize();
+}
+
+uint64_t asar_get_file_size(asar_t* asar) {
+  return asar->impl->getFileSize();
+}
+
 asar_status asar_get_last_error_code() {
   return code;
 }

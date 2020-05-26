@@ -34,9 +34,9 @@ class Asar {
   void open(const std::string& asarPath);
   void close();
   bool isOpen() const;
-  std::string getTempDir() const;
+  const std::string& getTempDir() const;
   std::string getTempPath(const std::string&) const;
-  std::string getSrc() const;
+  const std::string& getSrc() const;
   Json::Value getNode(const std::string&) const;
   uint64_t getFileSize() const;
   uint32_t getHeaderSize() const;
