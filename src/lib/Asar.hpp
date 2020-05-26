@@ -34,6 +34,13 @@ class Asar {
   Asar& operator=(Asar&&) = default;
   void open(const std::string& asarPath);
   void close();
+  bool isOpen() const;
+  std::string getTempDir() const;
+  std::string getTempPath(const std::string&) const;
+  std::string getSrc() const;
+  uint64_t getFileSize() const;
+  uint32_t getHeaderSize() const;
+  std::string getHeaderJsonString(bool format = false) const;
  private:
   static toyo::path::env_paths envpaths;
 

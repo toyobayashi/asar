@@ -338,4 +338,30 @@ void Asar::_init(const std::string& src, uint32_t headerSize, uint64_t fileSize,
   this->_tmp = tmp;
 }
 
+bool Asar::isOpen() const {
+  return this->_fd != nullptr;
+}
+
+std::string Asar::getTempDir() const {
+  return this->_tmp;
+}
+std::string Asar::getTempPath(const std::string& path) const {
+  return toyo::path::join(this->_tmp, path);
+}
+std::string Asar::getSrc() const {
+  return this->_src;
+}
+
+uint64_t Asar::getFileSize() const {
+  return this->_fileSize;
+}
+
+uint32_t Asar::getHeaderSize() const {
+  return this->_headerSize;
+}
+
+std::string Asar::getHeaderJsonString(bool format) const {
+  return this->_fs.toJson(format);
+}
+
 } // namespace asar
