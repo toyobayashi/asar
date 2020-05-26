@@ -402,4 +402,14 @@ std::vector<uint8_t> Asar::readFile(const std::string& path) const {
   return res;
 }
 
+std::vector<std::string> Asar::list() const {
+  std::vector<std::string> res;
+  std::regex re("\\\\");
+  this->walk(this->_fs.get(), [&](const Json::Value&, const std::string& name) {
+    res.push_back(std::regex_replace(name, re, "/"));
+    return true;
+  });
+  return res;
+}
+
 } // namespace asar

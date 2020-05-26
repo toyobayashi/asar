@@ -44,7 +44,21 @@ class Asar {
   bool exists(const std::string&) const;
   std::vector<std::string> readdir(const std::string& path) const;
   std::vector<uint8_t> readFile(const std::string& path) const;
+  std::vector<std::string> list() const;
  private:
+  
+  template <typename Callable>
+  void walk(const Json::Value& node, const Callable& callback, const std::string& path = "") const {
+    if (callback(node, path)) {
+      if (node.isMember("files")) {
+        std::vector<std::string> keys = node.getMemberNames();
+        for (const std::string& name : keys) {
+          this->walk(node["files"][name], callback, toyo::path::join(path, name));
+        }
+      }
+    }
+  }
+
   static toyo::path::env_paths envpaths;
 
   struct FileInfo {
