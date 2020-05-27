@@ -27,7 +27,8 @@ void Asar::copyDirectory(const std::string s, const std::string& d, asar_transfo
   toyo::fs::stats stat = toyo::fs::lstat(source);
 
   if (stat.is_directory()) {
-    if (toyo::path::relative(s, d).find("..") != 0) {
+    std::string rel = toyo::path::relative(s, d);
+    if (rel.find("..") != std::string::npos) {
       throw AsarError(invalid_path, std::string("Cannot copy a directory into itself. copy \"") + s + "\" -> \"" + d + "\"");
     }
     toyo::fs::mkdirs(dest);
