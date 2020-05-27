@@ -1,6 +1,6 @@
 #include "asar/asar.h"
 #include "asar/Asar.hpp"
-#include "AsarError.hpp"
+#include "asar/AsarError.hpp"
 
 #include <cstring>
 #include <exception>

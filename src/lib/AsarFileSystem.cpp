@@ -2,7 +2,7 @@
 
 #include "json/json.h"
 #include "asar/AsarFileSystem.hpp"
-#include "AsarError.hpp"
+#include "asar/AsarError.hpp"
 
 #include <cstddef>
 #include <cstdio>
