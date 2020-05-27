@@ -55,20 +55,20 @@ typedef enum asar_status {
   file_error
 } asar_status;
 
-asar_t* asar_open(const char* asar_path);
-void asar_close(asar_t*);
-boolean_t asar_is_open(asar_t*);
-const char* asar_get_temp_dir(asar_t*);
-const char* asar_get_src(asar_t*);
-uint32_t asar_get_header_size(asar_t*);
-uint64_t asar_get_file_size(asar_t*);
-int asar_get_header_json_string(asar_t*, boolean_t, char*, size_t);
-asar_status asar_get_node(asar_t*, const char*, asar_node_t*); 
-boolean_t asar_exists(asar_t*, const char*);
-int asar_read_file(asar_t*, const char*, char*, size_t);
-void asar_list(asar_t*);
-asar_status asar_extract(asar_t*, const char*, const char*);
-asar_status asar_extract_temp(asar_t*, const char*);
+ASAR_API asar_t* asar_open(const char* asar_path);
+ASAR_API void asar_close(asar_t*);
+ASAR_API boolean_t asar_is_open(asar_t*);
+ASAR_API const char* asar_get_temp_dir(asar_t*);
+ASAR_API const char* asar_get_src(asar_t*);
+ASAR_API uint32_t asar_get_header_size(asar_t*);
+ASAR_API uint64_t asar_get_file_size(asar_t*);
+ASAR_API int asar_get_header_json_string(asar_t*, boolean_t, char*, size_t);
+ASAR_API asar_status asar_get_node(asar_t*, const char*, asar_node_t*); 
+ASAR_API boolean_t asar_exists(asar_t*, const char*);
+ASAR_API int asar_read_file(asar_t*, const char*, char*, size_t);
+ASAR_API void asar_list(asar_t*);
+ASAR_API asar_status asar_extract(asar_t*, const char*, const char*);
+ASAR_API asar_status asar_extract_temp(asar_t*, const char*);
 
 typedef void (*asar_transform_callback_t)(const char* src, const char* tmp_path);
 

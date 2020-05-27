@@ -1,8 +1,16 @@
 file(GLOB_RECURSE LIB_SOURCE_FILES "src/lib/*.cpp" "src/lib/*.c")
 
 if(CCPM_BUILD_DLL)
+  if(WIN32 AND MSVC)
+    set(NODEV_VERSIONINFO_RC "${CMAKE_CURRENT_BINARY_DIR}/asar.rc")
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/src/lib/asar.rc.in" "${NODEV_VERSIONINFO_RC}")
+  else()
+    set(NODEV_VERSIONINFO_RC "")
+  endif()
+
   add_library(${LIB_NAME} SHARED
     ${LIB_SOURCE_FILES}
+    ${NODEV_VERSIONINFO_RC}
   )
 
   target_compile_definitions(${LIB_NAME} PRIVATE "CCPM_BUILD_DLL_${LIB_NAME}")
@@ -39,7 +47,7 @@ if(WIN32 AND MSVC)
   )
 else()
   if(CCPM_BUILD_DLL)
-    target_compile_options(${LIB_NAME} PRIVATE -fPIC)
+    target_compile_options(${LIB_NAME} PUBLIC -fPIC)
   endif()
 endif()
 

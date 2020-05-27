@@ -9,6 +9,7 @@
       "${workspaceFolder}/node_modules/@ccpm/pickle/include",
       "${workspaceFolder}/node_modules/@ccpm/cmocha/include"
     ],
+    "defines": ["ASAR_VERSION=\"1.0.0\""],
     "clPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.26.28801\\bin\\Hostx64\\x86\\cl.exe",
     "gccPath": "/usr/bin/gcc",
     "clangPath": "/usr/bin/clang"
@@ -16,7 +17,7 @@
   "configurations": [
     {
       "name": "Win32",
-      "defines": ["_DEBUG", "UNICODE", "_UNICODE"],
+      "defines": ["${defines}", "_DEBUG", "UNICODE", "_UNICODE"],
       "compilerPath": "${clPath}",
       "windowsSdkVersion": "10.0.18362.0",
       "intelliSenseMode": "msvc-x86",
@@ -26,7 +27,7 @@
     },
     {
       "name": "Linux",
-      "defines": [],
+      "defines": ["${defines}"],
       "compilerPath": "${gccPath}",
       "cStandard": "c11",
       "cppStandard": "c++17",
@@ -43,7 +44,7 @@
     {
       "name": "macOS",
       "includePath": ["${includePath}"],
-      "defines": [],
+      "defines": ["${defines}"],
       "macFrameworkPath": ["/System/Library/Frameworks", "/Library/Frameworks"],
       "compilerPath": "${clangPath}",
       "cStandard": "c11",

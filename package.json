@@ -1,8 +1,7 @@
 {
   "name": "@ccpm/asar",
-  "version": "0.0.0-dev",
-  "description": "",
-  "private": true,
+  "version": "1.0.0",
+  "description": "ASAR CLI tool.",
   "main": "index.js",
   "scripts": {
     "build:win": ".\\build.bat win32 static test",
@@ -26,6 +25,6 @@
     "@ccpm/dep-paths": "^1.3.0",
     "@ccpm/oid": "^1.0.7",
     "@ccpm/pickle": "github:toyobayashi/pickle",
-    "@ccpm/toyo": "github:toyobayashi/toyo#v0.4.1"
+    "@ccpm/toyo": "github:toyobayashi/toyo#v0.4.2"
   }
 }

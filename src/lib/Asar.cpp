@@ -27,8 +27,7 @@ void Asar::copyDirectory(const std::string s, const std::string& d, asar_transfo
   toyo::fs::stats stat = toyo::fs::lstat(source);
 
   if (stat.is_directory()) {
-    std::string rel = toyo::path::relative(s, d);
-    if (rel.find("..") != std::string::npos) {
+    if (dest.find(source) != std::string::npos) {
       throw AsarError(invalid_path, std::string("Cannot copy a directory into itself. copy \"") + s + "\" -> \"" + d + "\"");
     }
     toyo::fs::mkdirs(dest);
@@ -296,7 +295,11 @@ void Asar::_readInfo() {
   // this->_asarCheck();
   bool r = false;
   char headerSize[8];
-  ::fread(headerSize, 1, 8, this->_fd);
+  size_t readsize = 0;
+  readsize = ::fread(headerSize, 1, 8, this->_fd);
+  if (readsize <= 0) {
+    throw AsarError(invalid_asar, "Invalid asar file.");
+  }
   Pickle pickle(headerSize, 8);
   PickleIterator it(pickle);
 
@@ -310,7 +313,10 @@ void Asar::_readInfo() {
 
   char* headerString = new char[uHeaderSize];
   memset(headerString, 0, uHeaderSize);
-  ::fread(headerString, 1, uHeaderSize, this->_fd);
+  readsize = ::fread(headerString, 1, uHeaderSize, this->_fd);
+  if (readsize <= 0) {
+    throw AsarError(invalid_asar, "Invalid asar file.");
+  }
   // _begin = ::ftell(this->_fd);
 
   Pickle pickle2(headerString, uHeaderSize);
@@ -404,7 +410,12 @@ std::vector<uint8_t> Asar::readFile(const std::string& path) const {
   uint8_t* buf = new uint8_t[size];
   long curpos = ::ftell(this->_fd);
   ::fseek(this->_fd, (long)offset, SEEK_SET);
-  ::fread(buf, 1, size, this->_fd);
+  size_t readsize = ::fread(buf, 1, size, this->_fd);
+  if (readsize <= 0) {
+    ::fseek(this->_fd, curpos, SEEK_SET);
+    delete buf;
+    throw AsarError(invalid_asar, "Invalid asar file.");
+  }
   ::fseek(this->_fd, curpos, SEEK_SET);
   std::vector<uint8_t> res(buf, buf + size);
   delete buf;
