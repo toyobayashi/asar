@@ -6,7 +6,7 @@
       "type": "cppvsdbg",
       "request": "launch",
       "program": "${workspaceFolder}\\build\\win\\Win32\\Debug\\asarcpp.exe",
-      "args": ["p", "-u", "^.*\\.png$", ".\\test\\input\\packthis", "test\\output\\packthis-unpack.asar"],
+      "args": ["p", "-u", "*.png", ".\\test\\input\\packthis", "test\\output\\packthis-unpack.asar"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

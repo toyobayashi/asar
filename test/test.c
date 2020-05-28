@@ -27,7 +27,7 @@ static void transform(const char* src, const char* tmp_path) {
 
 int main() {
   // asar_pack(ASAR_INPUT_1, ASAR_OUTPUT_1, NULL, NULL);
-  asar_pack(ASAR_INPUT_1, ASAR_OUTPUT_2, "^.*\\.png$", NULL);
+  asar_pack(ASAR_INPUT_1, ASAR_OUTPUT_2, "*.png", NULL);
   // asar_pack(ASAR_INPUT_1, ASAR_OUTPUT_3, NULL, transform);
 
   asar_t* asar = asar_open(ASAR_OUTPUT_2);

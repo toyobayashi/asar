@@ -14,7 +14,7 @@ Options:
   -h, --help                                display help for command
 
 Commands:
-  pack|p [-u <regex>] <dir> <output>        create asar archive
+  pack|p [-u <glob>] <dir> <output>         create asar archive
   list|l <archive>                          list files of asar archive
   extract|e [-p <path>] <archive> <dest>    extract files from archive
 ```
@@ -29,6 +29,8 @@ Windows:
 > npm install
 > .\build.bat Win32 Release static
 ```
+
+Linux / macOS:
 
 ``` bash
 $ npm install
@@ -69,7 +71,7 @@ static void transform(const char* src, const char* tmp_path) {
 
 int main() {
   char output[] = "./test/output/packthis-unpack.asar";
-  asar_pack("./test/input/packthis", output, "^.*\\.png$", transform);
+  asar_pack("./test/input/packthis", output, "*.png", transform);
 
   asar_t* asar = asar_open(output);
   uint32_t header_size = asar_get_header_size(asar);
@@ -99,7 +101,7 @@ C++ API
 int main() {
   std::string output = "./test/output/packthis-unpack.asar";
   try {
-    asar::Asar::pack("./test/input/packthis", output, "^.*\\.png$", transform);
+    asar::Asar::pack("./test/input/packthis", output, "*.png", transform);
 
     asar::Asar asar;
     asar.open(output);

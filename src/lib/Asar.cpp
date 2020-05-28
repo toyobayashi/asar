@@ -139,9 +139,13 @@ Asar::HeaderInfo Asar::createHeaderInfo(
       }
 
       if (unpack != nullptr) {
-        std::smatch sm;
-        std::regex unpackRegex(unpack);
-        if (std::regex_match(pathInAsarFull, sm, unpackRegex)) {
+        // std::smatch sm;
+        // std::regex unpackRegex(unpack);
+        // if (std::regex_match(pathInAsarFull, sm, unpackRegex)) {
+        //   node["unpacked"] = true;
+        // }
+
+        if (toyo::path::globrex::match(pathInAsarFull, unpack) || toyo::path::globrex::match(toyo::path::basename(pathInAsarFull), unpack)) {
           node["unpacked"] = true;
         }
       }

@@ -194,7 +194,7 @@ void printHelp() {
   console::log("  -h, --help                                display help for command");
   console::log("");
   console::log("Commands:");
-  console::log("  pack|p [-u <regex>] <dir> <output>        create asar archive");
+  console::log("  pack|p [-u <glob>] <dir> <output>         create asar archive");
   console::log("  list|l <archive>                          list files of asar archive");
   console::log("  extract|e [-p <path>] <archive> <dest>    extract files from archive");
 }
